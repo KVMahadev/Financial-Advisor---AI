@@ -8,7 +8,7 @@ top_funds = pd.read_csv(
     "top_funds.csv"
 )
 
-print(top_funds["fund_name"].tolist())
+
 
 # ==========================================
 # USER PROFILE TEMPLATE
