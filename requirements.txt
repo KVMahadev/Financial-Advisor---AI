@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+openai
+pinecone
+yfinance
+pandas
+pypdf
+python-dotenv
