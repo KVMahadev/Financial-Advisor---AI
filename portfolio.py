@@ -197,12 +197,23 @@ def generate_fund_recommendations(profile):
 
     allocation = get_asset_allocation(profile)
 
+    remaining_goal = max(
+
+    0,
+
+    profile["goal_amount"]
+
+    - profile["existing_investments"]
+
+)
+
     required_sip = calculate_sip(
 
-        profile["goal_amount"],
-        profile["goal_years"]
+    remaining_goal,
 
-    )
+    profile["goal_years"]
+
+)
 
     sip_allocation = {}
 
@@ -336,9 +347,24 @@ def portfolio_summary(profile):
         profile
     )
 
+    # ----------------------------------
+    # CONSIDER EXISTING INVESTMENTS
+    # ----------------------------------
+
+    remaining_goal = max(
+
+        0,
+
+        profile["goal_amount"]
+
+        - profile["existing_investments"]
+
+    )
+
     required_sip = calculate_sip(
 
-        profile["goal_amount"],
+        remaining_goal,
+
         profile["goal_years"]
 
     )
@@ -367,13 +393,82 @@ def portfolio_summary(profile):
 
     )
 
+    # ----------------------------------
+    # FINANCIAL HEALTH ANALYSIS
+    # ----------------------------------
+
+    monthly_income = float(
+        profile["monthly_income"]
+    )
+
+    monthly_expenses = float(
+        profile["monthly_expenses"]
+    )
+
+    monthly_surplus = max(
+
+        0,
+
+        monthly_income
+        - monthly_expenses
+
+    )
+
+    emergency_fund_required = (
+
+        monthly_expenses * 6
+
+    )
+
+    if required_sip <= monthly_surplus:
+
+        feasibility = (
+            "Achievable"
+        )
+
+    else:
+
+        feasibility = (
+            "Not Achievable"
+        )
+
     return {
 
         "Client Name":
         profile["name"],
 
+        "Age":
+        profile["age"],
+
+        "Dependents":
+        profile["dependents"],
+
         "Goal":
         profile["financial_goal"],
+
+        "Goal Amount":
+        profile["goal_amount"],
+
+        "Existing Investments":
+        profile["existing_investments"],
+
+        "Remaining Goal":
+        remaining_goal,
+
+        "Monthly Income":
+        monthly_income,
+
+        "Monthly Expenses":
+        monthly_expenses,
+
+        "Monthly Surplus":
+        monthly_surplus,
+
+        "Emergency Fund Required":
+        emergency_fund_required,
+
+        "Goal Feasibility":
+        feasibility,
 
         "Required SIP":
         required_sip,

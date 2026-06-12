@@ -1,6 +1,5 @@
 from config import client, index
 
-
 # ==========================================
 # OPENAI EMBEDDING FUNCTION
 # ==========================================
@@ -40,39 +39,86 @@ def advisor_chat(question):
 
     )
 
-    context = "\n\n".join(
-
-        [
-
-            match["metadata"].get(
-                "text",
-                ""
-            )
-
-            for match
-
-            in results["matches"]
-
-        ]
-
+    matches = results.get(
+        "matches",
+        []
     )
 
-    prompt = f"""
-You are a financial advisor.
+    # ==========================================
+    # CHECK RELEVANCE SCORE
+    # ==========================================
 
-Use only the supplied context.
+    use_rag = False
 
-If the answer is found:
-- Explain in 2-4 sentences.
-- Keep it simple.
-- Do not make up information.
+    if len(matches) > 0:
 
-If the answer is not found:
-Reply that the information is not available in the financial knowledge base.
+        best_score = matches[0].get(
+            "score",
+            0
+        )
+
+        print(
+            f"Best Match Score: {best_score}"
+        )
+
+        if best_score > 0.75:
+
+            use_rag = True
+
+    # ==========================================
+    # RAG ANSWER
+    # ==========================================
+
+    if use_rag:
+
+        context = "\n\n".join(
+
+            [
+
+                match["metadata"].get(
+                    "text",
+                    ""
+                )
+
+                for match
+
+                in matches
+
+            ]
+
+        )
+
+        prompt = f"""
+You are a professional financial advisor.
+
+Use ONLY the supplied context.
+
+If the answer exists in the context:
+- Explain clearly.
+- Keep the answer concise.
+- Use simple language.
 
 Context:
 
 {context}
+
+Question:
+
+{question}
+
+Answer:
+"""
+
+    # ==========================================
+    # GPT FALLBACK
+    # ==========================================
+
+    else:
+
+        prompt = f"""
+You are a professional financial advisor.
+
+Answer the question using your general financial knowledge.
 
 Question:
 
