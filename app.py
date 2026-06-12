@@ -4,6 +4,8 @@ from advisor import financial_advisor
 
 from portfolio import portfolio_summary
 
+from stock import stock_advisor
+
 app = FastAPI(
     title="Financial Advisor AI"
 )
@@ -47,3 +49,21 @@ def portfolio(payload: dict):
     )
 
     return result
+
+@app.post("/stock")
+def stock(payload: dict):
+
+    question = payload.get(
+        "question"
+    )
+
+    answer = stock_advisor(
+        question
+    )
+
+    return {
+
+        "answer":
+        answer
+
+    }

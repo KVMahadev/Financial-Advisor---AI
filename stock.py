@@ -195,7 +195,24 @@ Output:
 # STOCK ADVISOR
 # ==========================================
 
-def stock_advisor(company_name):
+def stock_advisor(question):
+
+    # --------------------------------------
+    # EXTRACT COMPANY
+    # --------------------------------------
+
+    company_name = extract_company(
+        question
+    )
+
+    print(
+        "EXTRACTED COMPANY:",
+        company_name
+    )
+
+    # --------------------------------------
+    # GET STOCK INFO
+    # --------------------------------------
 
     stock_info = get_stock_info(
         company_name
@@ -206,6 +223,10 @@ def stock_advisor(company_name):
         return (
             "Unable to find stock information."
         )
+
+    # --------------------------------------
+    # AI ANALYSIS
+    # --------------------------------------
 
     prompt = f"""
 
@@ -223,7 +244,7 @@ PE Ratio: {stock_info['PE Ratio']}
 
 User Question:
 
-Can I invest in {company_name} at current CMP?
+{question}
 
 Provide:
 
